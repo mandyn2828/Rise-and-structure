@@ -1,0 +1,14 @@
+{
+  "name": "rise-and-structure",
+  "version": "1.0.0",
+  "description": "The daily guidance system for mid-lifers",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "start:backend": "cd backend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "docker:up": "docker-compose -f deploy/docker-compose.yml up --build",
+    "docker:down": "docker-compose -f deploy/docker-compose.yml down"
+  }
+}

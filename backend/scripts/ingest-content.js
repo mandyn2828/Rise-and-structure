@@ -1,0 +1,73 @@
+const fs = require('fs');
+const path = require('path');
+const Database = require('better-sqlite3');
+const { v4: uuidv4 } = require('uuid');
+
+function runIngestion() {
+  const dbPath = process.env.DATABASE_URL || path.join(__dirname, '..', 'database', 'dev.db');
+  const schemaPath = path.join(__dirname, '..', 'database', 'schema.sql');
+  const db = new Database(dbPath);
+
+  // Initialize schema
+  const schema = fs.readFileSync(schemaPath, 'utf8');
+  db.exec(schema);
+
+  // In Docker, shared content might be in a different path
+  const contentDir = process.env.CONTENT_DIR || '/home/team/shared/content';
+  
+  if (!fs.existsSync(contentDir)) {
+    console.warn(`Content directory not found: ${contentDir}. Skipping ingestion.`);
+    return;
+  }
+
+  function ingestPillar(pillar) {
+    const pillarDir = path.join(contentDir, pillar);
+    if (!fs.existsSync(pillarDir)) return;
+
+    const files = fs.readdirSync(pillarDir).filter(f => f.endsWith('.md') && !f.includes('OVERVIEW'));
+
+    files.forEach(file => {
+      const filePath = path.join(pillarDir, file);
+      const content = fs.readFileSync(filePath, 'utf8');
+      
+      const match = file.match(/^(\d+)([ab])?-(.+)\.md$/);
+      if (!match) return;
+
+      const dayOfWeek = parseInt(match[1]);
+      const weekType = match[2] ? match[2].toUpperCase() : 'A';
+      const slug = match[3];
+
+      const titleMatch = content.match(/^# (.+)$/m);
+      const title = titleMatch ? titleMatch[1] : slug;
+
+      const difficulties = ['starter', 'builder', 'thriver'];
+
+      difficulties.forEach(diff => {
+        try {
+          db.prepare(`
+            INSERT INTO daily_content (id, pillar, day_of_week, week_type, title, body, difficulty, slug)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(day_of_week, week_type, pillar, difficulty) DO UPDATE SET
+              title = excluded.title,
+              body = excluded.body,
+              slug = excluded.slug
+          `).run(uuidv4(), pillar, dayOfWeek, weekType, title, content, diff, `${pillar}-${diff}-${file}`);
+          console.log(`Ingested ${pillar}/${file} for ${diff}`);
+        } catch (err) {
+          console.error(`Error ingesting ${file}:`, err.message);
+        }
+      });
+    });
+  }
+
+  ['wellness', 'mindset', 'finance'].forEach(ingestPillar);
+  console.log('Ingestion complete.');
+  db.close();
+}
+
+// Run if script is executed directly
+if (require.main === module) {
+  runIngestion();
+}
+
+module.exports = runIngestion;
