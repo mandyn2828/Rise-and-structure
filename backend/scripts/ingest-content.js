@@ -12,8 +12,9 @@ function runIngestion() {
   const schema = fs.readFileSync(schemaPath, 'utf8');
   db.exec(schema);
 
-  // In Docker, shared content might be in a different path
-  const contentDir = process.env.CONTENT_DIR || '/home/team/shared/content';
+  // In Render, we'll use the local content folder if CONTENT_DIR isn't set
+  const localContent = path.join(__dirname, '..', 'content');
+  const contentDir = process.env.CONTENT_DIR || (fs.existsSync(localContent) ? localContent : '/home/team/shared/content');
   
   if (!fs.existsSync(contentDir)) {
     console.warn(`Content directory not found: ${contentDir}. Skipping ingestion.`);

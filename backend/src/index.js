@@ -1,17 +1,23 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const dotenv = require('dotenv');
 const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-dotenv.config();
+let stripe;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+} else {
+  console.warn('STRIPE_SECRET_KEY not set. Payment features will be disabled.');
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -249,6 +255,13 @@ app.post('/api/community/posts/:id/comments', authenticateToken, (req, res) => {
 app.post('/api/payments/create-checkout-session', authenticateToken, async (req, res) => {
   const { priceId, tier } = req.body;
   
+  if (!stripe) {
+    return res.status(503).json({ 
+      message: 'Payment service is currently unavailable. Please use the mock activation for testing.',
+      is_mock_available: true
+    });
+  }
+  
   try {
     const user = db.prepare('SELECT stripe_customer_id, email FROM users WHERE id = ?').get(req.user.id);
     let customerId = user.stripe_customer_id;
@@ -276,6 +289,10 @@ app.post('/api/payments/create-checkout-session', authenticateToken, async (req,
 
 // Stripe Webhook
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) {
+    return res.status(503).send('Webhook service unavailable');
+  }
+
   const sig = req.headers['stripe-signature'];
   let event;
 
