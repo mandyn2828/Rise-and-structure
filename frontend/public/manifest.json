@@ -1,0 +1,26 @@
+{
+  "name": "Rise & Structure",
+  "short_name": "RiseStruct",
+  "description": "Rebuild your health, income, and direction — a structured guidance system for mid-lifers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FCFAF5",
+  "theme_color": "#1A5553",
+  "orientation": "portrait-primary",
+  "categories": ["health", "finance", "education", "personal-development"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "scope": "/"
+}
