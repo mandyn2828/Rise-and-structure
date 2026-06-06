@@ -34,29 +34,44 @@ The following environment variables are required:
 
 ### 1. Docker (Recommended)
 
-The project includes Dockerfiles for both frontend and backend.
+The project includes Dockerfiles for both frontend and backend in the `deploy/` directory.
 
 **Local Testing:**
+From the root directory:
 ```bash
-docker-compose up --build
+docker-compose -f deploy/docker-compose.yml up --build
 ```
 
 **Production:**
 Build and push images to a registry (like Docker Hub or GitHub Container Registry), then deploy to any cloud provider that supports Docker.
 
-### 2. Render
+---
 
-**Backend (Web Service):**
-- **Runtime:** Node
-- **Build Command:** `npm install`
-- **Start Command:** `npm start`
-- **Environment:** Add all backend env variables.
-- **Disk:** Attach a persistent disk to `/app/database` to persist the SQLite file.
+### 2. Render (Step-by-Step)
 
-**Frontend (Static Site):**
-- **Build Command:** `npm run build`
-- **Publish Directory:** `dist`
-- **Environment:** Set `VITE_API_URL`.
+To deploy on Render, you will create two separate services from the same GitHub repository.
+
+#### **Backend (Web Service)**
+1.  **Service Type:** Web Service
+2.  **Runtime:** Node
+3.  **Root Directory:** `backend`
+4.  **Build Command:** `npm install`
+5.  **Start Command:** `npm start`
+6.  **Environment Variables:** Add all required backend variables (see above).
+7.  **Disk (Persistence):**
+    *   Attach a persistent disk (e.g., 1GB).
+    *   **Mount Path:** `/app/database`
+    *   Set `DATABASE_URL` to `/app/database/dev.db`.
+
+#### **Frontend (Static Site)**
+1.  **Service Type:** Static Site
+2.  **Root Directory:** `frontend`
+3.  **Build Command:** `npm install && npm run build`
+4.  **Publish Directory:** `dist`
+5.  **Environment Variables:**
+    *   Set `VITE_API_URL` to your backend URL (e.g., `https://rise-backend.onrender.com/api`).
+
+---
 
 ### 3. Railway
 
@@ -71,10 +86,11 @@ Railway can automatically detect the `docker-compose.yml` or the individual Dock
 
 ## Post-Deployment Steps
 
-1. **Stripe Webhooks:**
-   - Configure your Stripe webhook URL to point to `https://your-backend.com/api/payments/webhook`.
-   - Ensure the `STRIPE_WEBHOOK_SECRET` matches the one provided by Stripe.
+1.  **Stripe Webhooks:**
+    *   Configure your Stripe webhook URL to point to `https://your-backend.com/api/payments/webhook`.
+    *   Ensure the `STRIPE_WEBHOOK_SECRET` matches the one provided by Stripe.
 
-2. **Content Ingestion:**
-   - Once deployed, you may need to run the ingestion script if your database is empty.
-   - Run: `node scripts/ingest-content.js` from the backend directory.
+2.  **Content Ingestion:**
+    *   Once deployed, you may need to run the ingestion script if your database is empty.
+    *   Run: `node scripts/ingest-content.js` from the backend directory.
+    *   On Render, you can trigger this via the **Shell** tab in the dashboard.
