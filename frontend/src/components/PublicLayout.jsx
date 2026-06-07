@@ -71,10 +71,10 @@ const PublicLayout = () => {
             </ul>
           </div>
           <div>
-            <h4 className="font-heading text-xl mb-6 text-white">Community</h4>
+            <h4 className="font-heading text-xl mb-6 text-white">Legal</h4>
             <ul className="space-y-4 text-bg-soft/60">
-              <li><Link to="/login" className="hover:text-white transition-colors">Success Stories</Link></li>
-              <li><Link to="/login" className="hover:text-white transition-colors">Member Forum</Link></li>
+              <li><Link to="/login" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/login" className="hover:text-white transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
         </div>
