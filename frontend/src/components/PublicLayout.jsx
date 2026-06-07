@@ -67,14 +67,14 @@ const PublicLayout = () => {
             <ul className="space-y-4 text-bg-soft/60">
               <li><Link to="/#features" className="hover:text-white transition-colors">Features</Link></li>
               <li><Link to="/#pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link to="/login" className="hover:text-white transition-colors">Login</Link></li>
+              <li><Link to="/support" className="hover:text-white transition-colors">Support</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-heading text-xl mb-6 text-white">Legal</h4>
             <ul className="space-y-4 text-bg-soft/60">
-              <li><Link to="/login" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/login" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

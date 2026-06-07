@@ -3,6 +3,9 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import Community from './pages/Community';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Support from './pages/Support';
 import Layout from './components/Layout';
 import PublicLayout from './components/PublicLayout';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -23,6 +26,9 @@ function App() {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/support" element={<Support />} />
           </Route>
 
           {/* Protected Routes */}
