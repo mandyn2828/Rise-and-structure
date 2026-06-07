@@ -24,7 +24,16 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'https://www.riseandstructure.com',
+    'https://riseandstructure.com',
+    /\.onrender\.com$/,
+    'http://localhost:5173'
+  ],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(morgan('dev'));
 
