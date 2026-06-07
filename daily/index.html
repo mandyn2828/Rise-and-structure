@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rise & Structure — Daily Health Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #1A5553;
+    --teal-light: #E1F5EE;
+    --teal-mid: #0F6E56;
+    --teal-border: #5DCAA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #185FA5;
+    --blue-border: #85B7EB;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
+    --amber-border: #EF9F27;
+    --text: #1a1a1a;
+    --text-muted: #6b7280;
+    --text-subtle: #9ca3af;
+    --bg: #f8f6f1;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.09);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-pill: 99px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: var(--teal);
+    color: #fff;
+    padding: 2rem 1.5rem 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 40px;
+    background: var(--bg);
+    border-radius: 40px 40px 0 0;
+  }
+  .brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  header h1 em { font-style: italic; opacity: 0.85; }
+  header p {
+    font-size: 14px;
+    opacity: 0.7;
+    max-width: 320px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .streak-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--amber-light);
+    border-radius: var(--radius-sm);
+    margin: -1.5rem 1rem 1.5rem;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(186,117,23,0.2);
+  }
+  .streak-bar .left { display: flex; align-items: center; gap: 8px; }
+  .streak-fire { font-size: 20px; }
+  .streak-text { font-size: 13px; font-weight: 500; color: var(--amber-dark); }
+  .pts-pill {
+    background: #fff;
+    border-radius: var(--radius-pill);
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    border: 1px solid rgba(26,85,83,0.2);
+  }
+
+  .container { padding: 0 1rem 4rem; max-width: 480px; margin: 0 auto; }
+
+  .nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .nav-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .nav-btn .done-dot { width: 6px; height: 6px; border-radius: 50%; background: #5DCAA5; display: none; }
+  .nav-btn.completed .done-dot { display: block; }
+
+  .game { display: none; animation: fadeUp 0.2s ease; }
+  .game.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-title { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+  .card-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 20px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface);
+    cursor: pointer; font-size: 14px; font-family: 'DM Sans', sans-serif;
+    color: var(--text); transition: all 0.15s;
+  }
+  .btn:hover { background: #f3f4f6; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .btn.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .btn.primary:hover { background: #134240; }
+  .btn.sm { padding: 6px 14px; font-size: 13px; }
+
+  .win-banner {
+    display: none;
+    background: var(--teal-light);
+    border: 1px solid var(--teal-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--teal-mid);
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .win-banner.show { display: block; animation: fadeUp 0.3s ease; }
+
+  /* breathwork */
+  .breath-center { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .ring-wrap { position: relative; width: 130px; height: 130px; }
+  .ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-phase { font-size: 15px; font-weight: 500; }
+  .ring-count { font-size: 12px; color: var(--text-muted); }
+
+  /* movement */
+  .move-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: all 0.2s; margin-bottom: 8px;
+  }
+  .move-item:last-child { margin-bottom: 0; }
+  .move-item.done { background: var(--teal-light); border-color: var(--teal-border); cursor: default; }
+  .move-icon { width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--teal-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .move-icon svg { width: 20px; height: 20px; stroke: var(--teal-mid); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .move-check { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #d1d5db; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .move-item.done .move-check { background: var(--teal); border-color: var(--teal); }
+  .check-svg { width: 13px; height: 13px; stroke: transparent; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .move-item.done .check-svg { stroke: #fff; }
+
+  /* hydration */
+  .glass-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .glass {
+    width: 34px; height: 48px; border-radius: 5px;
+    border: 1.5px solid #d1d5db; background: #f9fafb;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .glass.filled { background: var(--blue-light); border-color: var(--blue-border); }
+  .glass svg { width: 18px; height: 18px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke: #d1d5db; }
+  .glass.filled svg { stroke: var(--blue-mid); }
+  .hydro-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .hydro-count { font-size: 13px; color: var(--text-muted); }
+  .progress-wrap { height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-bottom: 1rem; }
+  .progress-bar { height: 100%; border-radius: 99px; transition: width 0.3s; background: var(--blue-mid); }
+  .hydro-btns { display: flex; gap: 8px; }
+
+  /* sleep */
+  .star-row { display: flex; gap: 6px; margin-bottom: 1.25rem; }
+  .star-btn {
+    width: 48px; height: 48px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface);
+    font-size: 18px; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; font-weight: 500; color: var(--text-muted);
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+  }
+  .star-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .habit-item {
+    padding: 11px 14px; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 13px;
+    cursor: pointer; transition: all 0.15s; margin-bottom: 8px;
+    color: var(--text);
+  }
+  .habit-item:hover { background: #f9fafb; }
+  .habit-item.picked { background: var(--teal-light); border-color: var(--teal-border); color: var(--teal-mid); cursor: default; }
+  .habit-item.faded { opacity: 0.35; cursor: default; }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 12px;
+    color: var(--text-subtle);
+  }
+  footer a { color: var(--teal); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Rise &amp; Structure</div>
+  <h1>Your daily health<br><em>mini games</em></h1>
+  <p>15 minutes. 4 games. Feel the difference by tonight.</p>
+</header>
+
+<div class="container">
+
+  <div class="streak-bar">
+    <div class="left">
+      <span class="streak-fire">⚡</span>
+      <span class="streak-text">3-day streak — keep going!</span>
+    </div>
+    <div class="pts-pill"><span id="total-pts">0</span> pts today</div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showGame('breath','btn-breath')" id="btn-breath">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10M12 2a10 10 0 0 0-10 10M12 22a10 10 0 0 1-10-10M12 22a10 10 0 0 0 10-10"/></svg>
+      Breathwork
+      <span class="done-dot"></span>
+    </button>
+    <button class="nav-btn" onclick="showGame('move','btn-move')" id="btn-move">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 22v-8l-3-4 3-3 3 3-3 4"/><path d="M7 14l-2 3M17 14l2 3"/></svg>
+      Movement
+      <span class="done-dot"></span>
+    </button>
+    <button class="nav-btn" onclick="showGame('hydro','btn-hydro')" id="btn-hydro">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6 8 4 13 4 16a8 8 0 0 0 16 0c0-3-2-8-8-14z"/></svg>
+      Hydration
+      <span class="done-dot"></span>
+    </button>
+    <button class="nav-btn" onclick="showGame('sleep','btn-sleep')" id="btn-sleep">
+      <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      Sleep
+      <span class="done-dot"></span>
+    </button>
+  </div>
+
+  <!-- BREATHWORK -->
+  <div class="game active" id="breath">
+    <div class="card">
+      <div class="card-title">4-7-8 breathwork</div>
+      <div class="card-sub">One full guided cycle. Follow the ring and reset your nervous system. Earn 20 pts.</div>
+      <div class="breath-center">
+        <div class="ring-wrap">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="56" fill="none" stroke="#e5e7eb" stroke-width="7"/>
+            <circle id="bCircle" cx="65" cy="65" r="56" fill="none" stroke="#1A5553" stroke-width="7"
+              stroke-dasharray="351.9" stroke-dashoffset="351.9" stroke-linecap="round"
+              transform="rotate(-90 65 65)" style="transition:stroke-dashoffset 0.35s linear;"/>
+          </svg>
+          <div class="ring-label">
+            <span class="ring-phase" id="bPhase">Ready</span>
+            <span class="ring-count" id="bCount">—</span>
+          </div>
+        </div>
+        <button class="btn primary" id="bBtn" onclick="startBreath()">Start</button>
+      </div>
+      <div class="win-banner" id="bWin">✓ +20 pts — breathing like a pro!</div>
+    </div>
+  </div>
+
+  <!-- MOVEMENT -->
+  <div class="game" id="move">
+    <div class="card">
+      <div class="card-title">Posture reset challenge</div>
+      <div class="card-sub">Tap each movement once you've done it. Earn 10 pts each.</div>
+      <div id="moveList">
+        <div class="move-item" id="m0" onclick="doMove(0)">
+          <div class="move-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6 8 4 13 4 16a8 8 0 0 0 16 0c0-3-2-8-8-14z"/><path d="M8 16s1-2 4-2 4 2 4 2"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:500;margin-bottom:2px;">Shoulder roll x5</div>
+            <div style="font-size:12px;color:var(--text-muted);">Roll both shoulders backward slowly</div>
+          </div>
+          <div class="move-check" id="mc0"><svg class="check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="move-item" id="m1" onclick="doMove(1)">
+          <div class="move-icon">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="7 8 12 3 17 8"/><polyline points="7 16 12 21 17 16"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:500;margin-bottom:2px;">Stand &amp; stretch up</div>
+            <div style="font-size:12px;color:var(--text-muted);">Reach both arms overhead, hold 5 sec</div>
+          </div>
+          <div class="move-check" id="mc1"><svg class="check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="move-item" id="m2" onclick="doMove(2)">
+          <div class="move-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:500;margin-bottom:2px;">Neck side-tilt x3</div>
+            <div style="font-size:12px;color:var(--text-muted);">Tilt ear to shoulder each side, slowly</div>
+          </div>
+          <div class="move-check" id="mc2"><svg class="check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+      </div>
+      <div class="win-banner" id="mWin">✓ +30 pts — body unlocked!</div>
+    </div>
+  </div>
+
+  <!-- HYDRATION -->
+  <div class="game" id="hydro">
+    <div class="card">
+      <div class="card-title">Hydration tracker</div>
+      <div class="card-sub">Goal: 8 glasses today. Tap + to log each one. Earn 5 pts per glass.</div>
+      <div class="glass-grid" id="glassGrid"></div>
+      <div class="hydro-meta">
+        <span class="hydro-count"><span id="hydroCount">0</span> / 8 glasses</span>
+        <span style="font-size:12px;color:var(--text-muted);" id="hydroPts">0 pts earned</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="hydroBar" style="width:0%"></div>
+      </div>
+      <div class="hydro-btns">
+        <button class="btn primary" onclick="addGlass()">+ Log a glass</button>
+        <button class="btn sm" onclick="removeGlass()">−</button>
+      </div>
+      <div class="win-banner" id="hWin">✓ +40 pts — fully hydrated champion!</div>
+    </div>
+  </div>
+
+  <!-- SLEEP -->
+  <div class="game" id="sleep">
+    <div class="card">
+      <div class="card-title">Sleep quality check-in</div>
+      <div class="card-sub">Rate last night 1–5, then pick one habit to protect tonight. Earn 15 pts.</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">How did you sleep?</div>
+      <div class="star-row" id="starRow">
+        <button class="star-btn" onclick="rateSleep(1)">1</button>
+        <button class="star-btn" onclick="rateSleep(2)">2</button>
+        <button class="star-btn" onclick="rateSleep(3)">3</button>
+        <button class="star-btn" onclick="rateSleep(4)">4</button>
+        <button class="star-btn" onclick="rateSleep(5)">5</button>
+      </div>
+      <div id="habitSection" style="display:none;">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Pick one habit for tonight:</div>
+        <div id="habitList"></div>
+      </div>
+      <div class="win-banner" id="sWin">✓ +15 pts — sleep plan locked in!</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  A free gift from <a href="https://www.riseandstructure.com" target="_blank">Rise &amp; Structure</a> — rebuild your health, income &amp; direction.
+</footer>
+
+<script>
+  let pts = 0;
+  function addPts(n) {
+    pts += n;
+    document.getElementById('total-pts').textContent = pts;
+  }
+
+  function showGame(id, btnId) {
+    document.querySelectorAll('.game').forEach(g => g.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById(btnId).classList.add('active');
+  }
+
+  // BREATHWORK
+  let breathRunning = false, breathDone = false;
+  function startBreath() {
+    if (breathRunning || breathDone) return;
+    breathRunning = true;
+    document.getElementById('bBtn').disabled = true;
+    const phases = [{l:'Inhale',s:4},{l:'Hold',s:7},{l:'Exhale',s:8}];
+    let pi=0, sec=0, total=0, totalAll=19;
+    const circ = document.getElementById('bCircle');
+    document.getElementById('bPhase').textContent = phases[0].l;
+    document.getElementById('bCount').textContent = phases[0].s;
+    const iv = setInterval(() => {
+      sec++; total++;
+      if (sec > phases[pi].s) {
+        pi++; sec = 1;
+        if (pi >= phases.length) {
+          clearInterval(iv); breathRunning = false; breathDone = true;
+          document.getElementById('bPhase').textContent = 'Done';
+          document.getElementById('bCount').textContent = '';
+          circ.style.strokeDashoffset = '0';
+          document.getElementById('bWin').classList.add('show');
+          document.getElementById('btn-breath').classList.add('completed');
+          addPts(20);
+          return;
+        }
+      }
+      document.getElementById('bPhase').textContent = phases[pi].l;
+      document.getElementById('bCount').textContent = phases[pi].s - sec + 1;
+      circ.style.strokeDashoffset = (351.9 * (1 - total / totalAll)).toFixed(1);
+    }, 1000);
+  }
+
+  // MOVEMENT
+  let moveDone = [false, false, false];
+  function doMove(i) {
+    if (moveDone[i]) return;
+    moveDone[i] = true;
+    document.getElementById('m'+i).classList.add('done');
+    addPts(10);
+    if (moveDone.every(Boolean)) {
+      document.getElementById('mWin').classList.add('show');
+      document.getElementById('btn-move').classList.add('completed');
+    }
+  }
+
+  // HYDRATION
+  let hydroGlasses = 0, hydroEarned = 0, hydroDone = false;
+  function buildGlasses() {
+    const grid = document.getElementById('glassGrid');
+    grid.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+      const d = document.createElement('div');
+      d.className = 'glass' + (i < hydroGlasses ? ' filled' : '');
+      d.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2C6 8 4 13 4 16a8 8 0 0 0 16 0c0-3-2-8-8-14z"/></svg>';
+      grid.appendChild(d);
+    }
+  }
+  function addGlass() {
+    if (hydroGlasses >= 8) return;
+    hydroGlasses++;
+    hydroEarned += 5;
+    addPts(5);
+    document.getElementById('hydroCount').textContent = hydroGlasses;
+    document.getElementById('hydroPts').textContent = hydroEarned + ' pts earned';
+    document.getElementById('hydroBar').style.width = Math.round((hydroGlasses/8)*100) + '%';
+    buildGlasses();
+    if (hydroGlasses >= 8 && !hydroDone) {
+      hydroDone = true;
+      document.getElementById('hWin').classList.add('show');
+      document.getElementById('btn-hydro').classList.add('completed');
+    }
+  }
+  function removeGlass() {
+    if (hydroGlasses <= 0) return;
+    hydroGlasses--;
+    hydroEarned = Math.max(0, hydroEarned - 5);
+    pts = Math.max(0, pts - 5);
+    document.getElementById('total-pts').textContent = pts;
+    document.getElementById('hydroCount').textContent = hydroGlasses;
+    document.getElementById('hydroPts').textContent = hydroEarned + ' pts earned';
+    document.getElementById('hydroBar').style.width = Math.round((hydroGlasses/8)*100) + '%';
+    buildGlasses();
+  }
+  buildGlasses();
+
+  // SLEEP
+  let sleepRating = 0, sleepDone = false;
+  const habits = {
+    low: ['No screens 30 min before bed','Set a consistent bedtime alarm','Try 5 min of light stretching before sleep','Keep your room cool and dark'],
+    high: ['Keep the same wake time tomorrow','Avoid caffeine after 2pm today','Get 10 min of morning sunlight','Wind down with a 5-min journal']
+  };
+  function rateSleep(n) {
+    if (sleepDone) return;
+    sleepRating = n;
+    document.querySelectorAll('.star-btn').forEach((b,i) => {
+      b.classList.toggle('active', i < n);
+    });
+    const pool = n <= 3 ? habits.low : habits.high;
+    const list = document.getElementById('habitList');
+    list.innerHTML = pool.map(h => `<div class="habit-item" onclick="pickHabit(this)">${h}</div>`).join('');
+    document.getElementById('habitSection').style.display = 'block';
+  }
+  function pickHabit(el) {
+    if (sleepDone) return;
+    sleepDone = true;
+    document.querySelectorAll('.habit-item').forEach(d => d.classList.add('faded'));
+    el.classList.remove('faded');
+    el.classList.add('picked');
+    document.getElementById('sWin').classList.add('show');
+    document.getElementById('btn-sleep').classList.add('completed');
+    addPts(15);
+  }
+</script>
+</body>
+</html>
