@@ -2,6 +2,7 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Settings, User, LogOut, Menu, X, Heart, DollarSign, Brain, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 const Layout = () => {
   const { user, logout } = useAuth();
@@ -38,9 +39,7 @@ const Layout = () => {
           >
             <Menu size={24} />
           </button>
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
-            R
-          </div>
+          <img src={logo} alt="" className="w-8 h-8 object-contain" />
           <span className="font-heading font-semibold text-xl text-primary tracking-tight">Rise & Structure</span>
         </div>
         
@@ -110,7 +109,7 @@ const Layout = () => {
             <aside className="absolute inset-y-0 left-0 w-72 bg-bg-card shadow-2xl flex flex-col p-6 animate-in slide-in-from-left duration-300">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">R</div>
+                  <img src={logo} alt="" className="w-8 h-8 object-contain" />
                   <span className="font-heading font-semibold text-lg text-primary">Rise & Structure</span>
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(false)}><X size={24} /></button>

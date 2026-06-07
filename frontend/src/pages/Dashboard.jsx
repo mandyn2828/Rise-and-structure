@@ -58,7 +58,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-border shadow-sm">
             <Flame size={24} className="text-secondary fill-secondary" />
             <div className="flex flex-col">
-              <span className="font-bold text-text-primary leading-none text-xl">{stats?.streak || 0}</span>
+              <span className="font-heading font-bold text-text-primary leading-none text-2xl">{stats?.streak || 0}</span>
               <span className="text-[10px] text-text-muted uppercase tracking-wider font-bold">day streak</span>
             </div>
           </div>
@@ -161,9 +161,9 @@ const Dashboard = () => {
                 const percent = p.total > 0 ? Math.round((p.completed / p.total) * 100) : 0;
                 return (
                   <div key={p.pillar}>
-                    <div className="flex justify-between text-sm mb-3 font-bold uppercase tracking-widest text-white/70">
+                    <div className="flex justify-between text-sm mb-3 font-heading font-bold uppercase tracking-widest text-white/70">
                       <span>{p.pillar}</span>
-                      <span>{percent}%</span>
+                      <span className="text-lg">{percent}%</span>
                     </div>
                     <div className="h-2.5 bg-white/10 rounded-full overflow-hidden border border-white/5">
                       <div 
