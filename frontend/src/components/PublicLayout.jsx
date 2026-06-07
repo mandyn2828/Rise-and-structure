@@ -1,6 +1,7 @@
 import { Link, Outlet } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import logo from '../assets/logo.png';
 
 const PublicLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,10 +11,8 @@ const PublicLayout = () => {
       <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20">
-                R
-              </div>
+            <Link to="/" className="flex items-center gap-3">
+              <img src={logo} alt="Rise & Structure" className="w-10 h-10 object-contain" />
               <span className="font-heading font-semibold text-2xl text-primary tracking-tight">Rise & Structure</span>
             </Link>
 
@@ -55,8 +54,8 @@ const PublicLayout = () => {
       <footer className="bg-text-primary text-bg-main py-12 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-white font-bold">R</div>
+            <div className="flex items-center gap-3 mb-6">
+              <img src={logo} alt="" className="w-8 h-8 object-contain brightness-0 invert opacity-80" />
               <span className="font-heading font-semibold text-xl text-white">Rise & Structure</span>
             </div>
             <p className="text-bg-soft/70 max-w-sm text-lg leading-relaxed">
@@ -68,15 +67,14 @@ const PublicLayout = () => {
             <ul className="space-y-4 text-bg-soft/60">
               <li><Link to="/#features" className="hover:text-white transition-colors">Features</Link></li>
               <li><Link to="/#pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link to="/login" className="hover:text-white transition-colors">Join Now</Link></li>
+              <li><Link to="/login" className="hover:text-white transition-colors">Login</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-heading text-xl mb-6 text-white">Company</h4>
+            <h4 className="font-heading text-xl mb-6 text-white">Community</h4>
             <ul className="space-y-4 text-bg-soft/60">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
+              <li><Link to="/login" className="hover:text-white transition-colors">Success Stories</Link></li>
+              <li><Link to="/login" className="hover:text-white transition-colors">Member Forum</Link></li>
             </ul>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { Check, ArrowRight, Activity, Brain, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import hero from '../assets/hero.png';
 
 const Landing = () => {
   return (
@@ -45,7 +46,7 @@ const Landing = () => {
             <div className="absolute -inset-4 bg-gradient-to-tr from-secondary/20 to-accent-gold/20 rounded-[3rem] blur-3xl opacity-50 -z-10"></div>
             <div className="bg-white rounded-[2.5rem] border border-border shadow-2xl p-4 md:p-8">
                <img 
-                src="https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?auto=format&fit=crop&q=80&w=2070" 
+                src={hero} 
                 alt="Structure and Health" 
                 className="rounded-3xl w-full h-[400px] object-cover shadow-inner"
               />
