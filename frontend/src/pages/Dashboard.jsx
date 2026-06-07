@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CheckCircle2, Circle, ArrowRight, Flame, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../api/config';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -17,8 +18,8 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const [planRes, statsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/daily-plan'),
-        axios.get('http://localhost:5000/api/user/stats')
+        axios.get(`${API_URL}/daily-plan`),
+        axios.get(`${API_URL}/user/stats`)
       ]);
       setPlan(planRes.data);
       setStats(statsRes.data);
@@ -31,7 +32,7 @@ const Dashboard = () => {
 
   const toggleTask = async (taskId) => {
     try {
-      await axios.post(`http://localhost:5000/api/tasks/${taskId}/complete`, { notes: '' });
+      await axios.post(`${API_URL}/tasks/${taskId}/complete`, { notes: '' });
       fetchData();
     } catch (err) {
       console.error('Failed to complete task');

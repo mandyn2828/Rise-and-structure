@@ -3,6 +3,7 @@ import axios from 'axios';
 import { MessageSquare, Plus, Send, User, Clock, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../api/config';
 
 const Community = () => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const Community = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/community/posts');
+      const res = await axios.get(`${API_URL}/community/posts`);
       setPosts(res.data);
     } catch (err) {
       console.error('Failed to fetch posts');
@@ -37,7 +38,7 @@ const Community = () => {
 
   const fetchPostDetails = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/community/posts/${id}`);
+      const res = await axios.get(`${API_URL}/community/posts/${id}`);
       setSelectedPost(res.data);
     } catch (err) {
       console.error('Failed to fetch post details');
@@ -47,7 +48,7 @@ const Community = () => {
   const handleCreatePost = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/community/posts', newPost);
+      await axios.post(`${API_URL}/community/posts`, newPost);
       setNewPost({ title: '', content: '' });
       setShowCreateModal(false);
       fetchPosts();
@@ -59,7 +60,7 @@ const Community = () => {
   const handleAddComment = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/api/community/posts/${selectedPostId}/comments`, { content: comment });
+      await axios.post(`${API_URL}/community/posts/${selectedPostId}/comments`, { content: comment });
       setComment('');
       fetchPostDetails(selectedPostId);
       fetchPosts(); // Update comment count in list
