@@ -62,6 +62,37 @@ function runIngestion() {
   }
 
   ['wellness', 'mindset', 'finance'].forEach(ingestPillar);
+
+  // Ingest Courses
+  const coursesDir = path.join(contentDir, 'courses');
+  console.log(`Checking for courses in: ${coursesDir}`);
+  if (fs.existsSync(coursesDir)) {
+    const courseFiles = fs.readdirSync(coursesDir).filter(f => f.endsWith('-blueprint.md'));
+    console.log(`Found ${courseFiles.length} course blueprints`);
+    courseFiles.forEach(file => {
+      const content = fs.readFileSync(path.join(coursesDir, file), 'utf8');
+      const slugMatch = content.match(/\*\*Slug:\*\* (.+)/);
+      const priceMatch = content.match(/\*\*Price:\*\* \$(\d+)/);
+      const titleMatch = content.match(/^# (.+) —/m);
+
+      if (slugMatch && priceMatch && titleMatch) {
+        const slug = slugMatch[1].trim();
+        const priceCents = parseInt(priceMatch[1]) * 100;
+        const title = titleMatch[1].trim();
+        const difficulty = 'all'; // Default
+
+        db.prepare(`
+          INSERT INTO courses (id, slug, title, description, price_cents, difficulty)
+          VALUES (?, ?, ?, ?, ?, ?)
+          ON CONFLICT(slug) DO UPDATE SET
+            title = excluded.title,
+            price_cents = excluded.price_cents
+        `).run(uuidv4(), slug, title, content, priceCents, difficulty);
+        console.log(`Ingested course: ${title}`);
+      }
+    });
+  }
+
   console.log('Ingestion complete.');
   db.close();
 }

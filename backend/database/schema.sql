@@ -70,3 +70,13 @@ CREATE TABLE IF NOT EXISTS community_comments (
   FOREIGN KEY (post_id) REFERENCES community_posts(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- User Course Ownership
+CREATE TABLE IF NOT EXISTS user_courses (
+  user_id TEXT NOT NULL,
+  course_id TEXT NOT NULL,
+  purchased_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, course_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (course_id) REFERENCES courses(id)
+);

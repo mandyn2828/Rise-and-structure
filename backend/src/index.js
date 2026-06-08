@@ -11,6 +11,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const { sendWelcomeEmail } = require('./email');
 
 let stripe;
 if (process.env.STRIPE_SECRET_KEY) {
@@ -85,6 +86,10 @@ app.post('/api/auth/register', async (req, res) => {
     );
 
     const token = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: '24h' });
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail(email, full_name).catch(console.error);
+
     res.status(201).json({ token, user: { id: userId, email, full_name, tier: 'starter' } });
   } catch (err) {
     if (err.message.includes('UNIQUE constraint failed')) {
@@ -259,10 +264,34 @@ app.post('/api/community/posts/:id/comments', authenticateToken, (req, res) => {
   res.status(201).json({ id: commentId, content });
 });
 
+// --- Course Routes ---
+
+// List all courses
+app.get('/api/courses', authenticateToken, (req, res) => {
+  const courses = db.prepare('SELECT id, slug, title, description, price_cents, difficulty FROM courses').all();
+  
+  // Check ownership for the current user
+  const ownedCourses = db.prepare('SELECT course_id FROM user_courses WHERE user_id = ?').all(req.user.id).map(c => c.course_id);
+  
+  const coursesWithOwnership = courses.map(course => ({
+    ...course,
+    is_owned: ownedCourses.includes(course.id)
+  }));
+  
+  res.json(coursesWithOwnership);
+});
+
+// Mock Course Purchase
+app.post('/api/courses/:courseId/mock-purchase', authenticateToken, (req, res) => {
+  const { courseId } = req.params;
+  db.prepare('INSERT OR IGNORE INTO user_courses (user_id, course_id) VALUES (?, ?)').run(req.user.id, courseId);
+  res.json({ message: 'Course purchased (mock)' });
+});
+
 // --- Stripe Routes ---
 
 app.post('/api/payments/create-checkout-session', authenticateToken, async (req, res) => {
-  const { priceId, tier } = req.body;
+  const { priceId, tier, courseId } = req.body;
   
   if (!stripe) {
     return res.status(503).json({ 
@@ -281,13 +310,15 @@ app.post('/api/payments/create-checkout-session', authenticateToken, async (req,
       db.prepare('UPDATE users SET stripe_customer_id = ? WHERE id = ?').run(customerId, req.user.id);
     }
 
+    const mode = courseId ? 'payment' : 'subscription';
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
-      mode: 'subscription',
-      success_url: `${req.headers.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin}/#pricing`,
-      metadata: { userId: req.user.id, tier }
+      mode: mode,
+      success_url: `${req.headers.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}${courseId ? '&course_id=' + courseId : ''}`,
+      cancel_url: `${req.headers.origin}/dashboard/store`,
+      metadata: { userId: req.user.id, tier, courseId }
     });
 
     res.json({ url: session.url });
@@ -315,8 +346,15 @@ app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), asy
     const session = event.data.object;
     const userId = session.metadata.userId;
     const tier = session.metadata.tier;
+    const courseId = session.metadata.courseId;
 
-    db.prepare('UPDATE users SET tier = ?, subscription_status = "active" WHERE id = ?').run(tier, userId);
+    if (tier) {
+      db.prepare('UPDATE users SET tier = ?, subscription_status = "active" WHERE id = ?').run(tier, userId);
+    }
+    
+    if (courseId) {
+      db.prepare('INSERT OR IGNORE INTO user_courses (user_id, course_id) VALUES (?, ?)').run(userId, courseId);
+    }
   }
 
   if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {

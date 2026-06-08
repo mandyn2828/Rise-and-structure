@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Settings, User, LogOut, Menu, X, Heart, DollarSign, Brain, Users } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Settings, User, LogOut, Menu, X, Heart, DollarSign, Brain, Users, ShoppingBag } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
@@ -22,6 +22,7 @@ const Layout = () => {
     { name: 'Finance', path: '/dashboard/finance', icon: DollarSign },
     { name: 'Mindset', path: '/dashboard/mindset', icon: Brain },
     { name: 'Community', path: '/dashboard/community', icon: Users },
+    { name: 'Store', path: '/dashboard/store', icon: ShoppingBag },
   ];
 
   const bottomLinks = [

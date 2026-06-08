@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import Community from './pages/Community';
+import Store from './pages/Store';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Support from './pages/Support';
@@ -39,6 +40,7 @@ function App() {
           }>
             <Route index element={<Dashboard />} />
             <Route path="community" element={<Community />} />
+            <Route path="store" element={<Store />} />
           </Route>
 
           {/* Redirects */}
