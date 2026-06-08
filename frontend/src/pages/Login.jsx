@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, Check } from 'lucide-react';
@@ -7,8 +7,14 @@ const Login = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '', full_name: '' });
   const [error, setError] = useState('');
-  const { login, register } = useAuth();
+  const { login, register, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +25,7 @@ const Login = () => {
       } else {
         await login(formData.email, formData.password);
       }
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed');
     }
