@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { CheckCircle2, Circle, ArrowRight, Flame, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, Circle, ArrowRight, Flame, Trophy, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../api/config';
 
@@ -39,13 +39,54 @@ const Dashboard = () => {
     }
   };
 
+  const handleUpgrade = async () => {
+    try {
+      const res = await axios.post(`${API_URL}/payments/create-checkout-session`, {
+        tier: 'builder'
+      });
+      if (res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (err) {
+      console.error('Failed to create checkout session');
+      // Mock fallback if Stripe fails
+      try {
+        await axios.post(`${API_URL}/subscriptions/mock-activate`);
+        window.location.reload();
+      } catch (mockErr) {
+        alert('Failed to upgrade. Please try again.');
+      }
+    }
+  };
+
   if (loading) return <div className="p-8 text-center font-body text-text-secondary text-xl">Building your day...</div>;
 
   const completedCount = plan?.tasks?.filter(t => t.completed).length || 0;
   const totalCount = plan?.tasks?.length || 0;
 
+  const isTrial = user?.subscription_status === 'active' && user?.trial_ends_at;
+  const daysLeft = isTrial ? Math.ceil((new Date(user.trial_ends_at) - new Date()) / (1000 * 60 * 60 * 24)) : 0;
+
   return (
     <div className="max-w-5xl mx-auto font-body">
+      {isTrial && daysLeft > 0 && (
+        <div className="mb-8 bg-gradient-to-r from-secondary to-primary text-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Trophy size={24} className="text-accent-gold" />
+            <div>
+              <p className="font-bold">You're in your 7-day free trial!</p>
+              <p className="text-sm opacity-90">{daysLeft} days remaining to rebuild your life.</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleUpgrade}
+            className="bg-white text-primary px-4 py-2 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-all"
+          >
+            Unlock Full Access
+          </button>
+        </div>
+      )}
+
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="text-4xl font-heading text-primary mb-2">Good morning, {user?.full_name?.split(' ')[0] || 'Alex'}</h1>

@@ -1,8 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import Progress from './pages/Progress';
+import Plan from './pages/Plan';
+import Wellness from './pages/Wellness';
+import Finance from './pages/Finance';
+import Mindset from './pages/Mindset';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import Community from './pages/Community';
+import ConnectionMap from './pages/Map';
 import Store from './pages/Store';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
@@ -26,6 +33,7 @@ function App() {
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Landing />} />
+            <Route path="/store" element={<Store />} />
             <Route path="/login" element={<Login />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
@@ -39,8 +47,14 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<Dashboard />} />
+            <Route path="progress" element={<Progress />} />
+            <Route path="plan" element={<Plan />} />
+            <Route path="wellness" element={<Wellness />} />
+            <Route path="finance" element={<Finance />} />
+            <Route path="mindset" element={<Mindset />} />
             <Route path="community" element={<Community />} />
-            <Route path="store" element={<Store />} />
+            <Route path="map" element={<ConnectionMap />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
 
           {/* Redirects */}
