@@ -10,12 +10,6 @@ const Landing = () => {
 
   const ctaLink = user ? '/dashboard' : '/login?mode=register';
 
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [user, navigate]);
-
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
