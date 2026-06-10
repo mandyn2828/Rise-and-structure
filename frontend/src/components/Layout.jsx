@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Settings, User, LogOut, Menu, X, Heart, DollarSign, Brain, Users, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, BookOpen, Settings, User, LogOut, Menu, X, Heart, DollarSign, Brain, Users, ShoppingBag, Map as MapIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
@@ -17,16 +17,18 @@ const Layout = () => {
 
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Transformation', path: '/dashboard/progress', icon: TrendingUp },
     { name: 'My Plan', path: '/dashboard/plan', icon: BookOpen },
     { name: 'Wellness', path: '/dashboard/wellness', icon: Heart },
     { name: 'Finance', path: '/dashboard/finance', icon: DollarSign },
     { name: 'Mindset', path: '/dashboard/mindset', icon: Brain },
     { name: 'Community', path: '/dashboard/community', icon: Users },
-    { name: 'Store', path: '/dashboard/store', icon: ShoppingBag },
+    { name: 'Connection Map', path: '/dashboard/map', icon: MapIcon },
+    { name: 'Store', path: '/store', icon: ShoppingBag },
   ];
 
   const bottomLinks = [
-    { name: 'Settings', path: '/settings', icon: Settings },
+    { name: 'Settings', path: '/dashboard/settings', icon: Settings },
   ];
 
   return (
@@ -44,20 +46,32 @@ const Layout = () => {
           <span className="font-heading font-semibold text-xl text-primary tracking-tight">Rise & Structure</span>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex flex-col items-end mr-2">
-            <span className="text-sm font-bold text-text-primary leading-none">{user?.full_name}</span>
+        <Link to="/dashboard/settings" className="flex items-center gap-3 md:gap-4 hover:opacity-80 transition-opacity group">
+          <div className="hidden md:flex flex-col items-end mr-1">
+            <span className="text-sm font-bold text-text-primary leading-none group-hover:text-primary transition-colors">{user?.full_name}</span>
             <span className="text-[10px] text-text-muted uppercase tracking-widest font-bold">{user?.tier} tier</span>
           </div>
-          <button className="p-2 text-text-secondary hover:bg-bg-soft rounded-full transition-colors">
+          <div className="p-2 text-text-secondary hover:bg-bg-soft rounded-full transition-colors border border-transparent group-hover:border-primary/20 group-hover:bg-primary/5">
             <User size={20} />
-          </button>
-        </div>
+          </div>
+        </Link>
       </header>
 
       <div className="flex flex-1 relative">
         {/* Sidebar (Desktop) */}
         <aside className="w-64 bg-bg-card border-r border-border hidden lg:flex flex-col p-6 sticky top-16 h-[calc(100vh-64px)]">
+          <Link 
+            to="/dashboard/settings" 
+            className="mb-8 p-4 bg-bg-soft/30 rounded-2xl border border-border hover:border-primary/20 hover:bg-bg-soft/50 transition-all group flex items-center gap-3"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all border border-primary/10">
+              <User size={20} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-text-primary truncate group-hover:text-primary transition-colors">{user?.full_name}</span>
+              <span className="text-[10px] text-text-muted uppercase tracking-widest font-black">{user?.tier} tier</span>
+            </div>
+          </Link>
           <div className="flex-1 space-y-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -115,6 +129,21 @@ const Layout = () => {
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(false)}><X size={24} /></button>
               </div>
+
+              <Link 
+                to="/dashboard/settings" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="mb-8 p-4 bg-bg-soft rounded-2xl flex items-center gap-4 hover:bg-bg-soft/80 transition-all border border-border"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                  <User size={24} />
+                </div>
+                <div>
+                  <p className="font-bold text-text-primary">{user?.full_name}</p>
+                  <p className="text-xs text-text-muted uppercase tracking-widest font-black">{user?.tier} tier</p>
+                </div>
+              </Link>
+
               <div className="flex-1 space-y-2">
                 {navLinks.map((link) => (
                   <Link 

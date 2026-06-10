@@ -20,6 +20,7 @@ const PublicLayout = () => {
             <nav className="hidden md:flex items-center gap-8">
               <Link to="/#features" className="text-text-secondary hover:text-primary transition-colors font-medium">Features</Link>
               <Link to="/#pricing" className="text-text-secondary hover:text-primary transition-colors font-medium">Pricing</Link>
+              <Link to="/store" className="text-text-secondary hover:text-primary transition-colors font-medium">Courses</Link>
               <Link to="/login" className="text-text-secondary hover:text-primary transition-colors font-medium">Login</Link>
               <Link 
                 to="/login" 
@@ -41,6 +42,7 @@ const PublicLayout = () => {
           <div className="md:hidden bg-white border-b border-border p-4 space-y-4 animate-in slide-in-from-top duration-300">
             <Link to="/#features" className="block text-lg font-medium text-text-primary px-4 py-2 hover:bg-bg-soft rounded-lg" onClick={() => setIsMenuOpen(false)}>Features</Link>
             <Link to="/#pricing" className="block text-lg font-medium text-text-primary px-4 py-2 hover:bg-bg-soft rounded-lg" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+            <Link to="/store" className="block text-lg font-medium text-text-primary px-4 py-2 hover:bg-bg-soft rounded-lg" onClick={() => setIsMenuOpen(false)}>Courses</Link>
             <Link to="/login" className="block text-lg font-medium text-text-primary px-4 py-2 hover:bg-bg-soft rounded-lg" onClick={() => setIsMenuOpen(false)}>Login</Link>
             <Link to="/login" className="block w-full text-center bg-primary text-white px-6 py-3 rounded-xl font-bold" onClick={() => setIsMenuOpen(false)}>Get Started</Link>
           </div>
