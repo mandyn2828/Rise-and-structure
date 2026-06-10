@@ -8,6 +8,8 @@ const Landing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const ctaLink = user ? '/dashboard' : '/login?mode=register';
+
   useEffect(() => {
     if (user) {
       navigate('/dashboard', { replace: true });
@@ -35,10 +37,10 @@ const Landing = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-bottom duration-1000 delay-200">
               <Link 
-                to="/login" 
+                to={ctaLink} 
                 className="bg-primary text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 hover:shadow-2xl active:scale-95 text-center flex items-center justify-center gap-2"
               >
-                Start Your Rebuild
+                {user ? 'Go to Dashboard' : 'Start Your Rebuild'}
                 <ArrowRight size={24} />
               </Link>
               <div className="flex -space-x-3 items-center px-4">
@@ -156,7 +158,11 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-20">
             <h2 className="font-heading text-4xl md:text-5xl text-text-primary mb-6">Choose the plan that fits your rebuild.</h2>
-            <p className="text-text-secondary text-xl">Join hundreds of others taking back control of their daily life.</p>
+            <p className="text-text-secondary text-xl mb-6">Join hundreds of others taking back control of their daily life.</p>
+            <div className="inline-block bg-bg-soft px-6 py-3 rounded-2xl border border-border">
+              <span className="text-text-primary font-medium">Looking for specific deep-dives? </span>
+              <Link to="/store" className="text-secondary font-bold hover:underline ml-1">Explore our Courses & Blueprints &rarr;</Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
@@ -178,8 +184,8 @@ const Landing = () => {
                   </li>
                 ))}
               </ul>
-              <Link to="/login" className="w-full py-4 rounded-xl border-2 border-primary text-primary font-bold text-center hover:bg-primary/5 transition-colors">
-                Start 7-Day Trial
+              <Link to={ctaLink} className="w-full py-4 rounded-xl border-2 border-primary text-primary font-bold text-center hover:bg-primary/5 transition-colors">
+                {user ? 'Go to Dashboard' : 'Start 7-Day Trial'}
               </Link>
             </div>
 
@@ -210,8 +216,8 @@ const Landing = () => {
                   </li>
                 ))}
               </ul>
-              <Link to="/login" className="w-full py-4 rounded-xl bg-white text-primary font-bold text-center hover:bg-bg-soft transition-colors shadow-lg">
-                Get Yearly Access
+              <Link to={ctaLink} className="w-full py-4 rounded-xl bg-white text-primary font-bold text-center hover:bg-bg-soft transition-colors shadow-lg">
+                {user ? 'Go to Dashboard' : 'Get Yearly Access'}
               </Link>
               <div className="mt-4 text-center text-xs opacity-50 font-medium">Just $12.42 per month</div>
             </div>
@@ -240,8 +246,8 @@ const Landing = () => {
                   </li>
                 ))}
               </ul>
-              <Link to="/login" className="w-full py-4 rounded-xl border-2 border-primary text-primary font-bold text-center hover:bg-primary/5 transition-colors">
-                Apply for Thriver
+              <Link to={ctaLink} className="w-full py-4 rounded-xl border-2 border-primary text-primary font-bold text-center hover:bg-primary/5 transition-colors">
+                {user ? 'Go to Dashboard' : 'Apply for Thriver'}
               </Link>
             </div>
           </div>
@@ -260,10 +266,10 @@ const Landing = () => {
               Join 400+ others who are rebuilding their health, income, and sense of direction one daily step at a time.
             </p>
             <Link 
-              to="/login" 
+              to={ctaLink} 
               className="inline-block bg-secondary text-white px-12 py-6 rounded-2xl font-bold text-2xl hover:bg-secondary-hover transition-all shadow-xl shadow-secondary/20 hover:shadow-2xl active:scale-95"
             >
-              Get Started Now
+              {user ? 'Go to Dashboard' : 'Get Started Now'}
             </Link>
             <p className="text-bg-soft/40 mt-8 text-sm font-medium">No commitment. Cancel anytime. 7-day free trial.</p>
           </div>

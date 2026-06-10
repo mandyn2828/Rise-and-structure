@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, Check } from 'lucide-react';
 
 const Login = () => {
-  const [isRegister, setIsRegister] = useState(false);
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get('mode') === 'register';
+  const [isRegister, setIsRegister] = useState(initialMode);
   const [formData, setFormData] = useState({ email: '', password: '', full_name: '' });
   const [error, setError] = useState('');
   const { login, register, user } = useAuth();
@@ -15,6 +17,15 @@ const Login = () => {
       navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    if (mode === 'register') {
+      setIsRegister(true);
+    } else if (mode === 'login') {
+      setIsRegister(false);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,6 +145,20 @@ const Login = () => {
               />
             </div>
 
+            {isRegister && (
+              <div className="flex items-start gap-3 ml-1">
+                <input 
+                  type="checkbox" 
+                  id="terms" 
+                  className="mt-1 w-5 h-5 rounded-lg border-border text-primary focus:ring-primary transition-all cursor-pointer"
+                  required
+                />
+                <label htmlFor="terms" className="text-sm text-text-secondary leading-tight cursor-pointer">
+                  I agree to the <a href="/terms" target="_blank" className="text-primary font-bold hover:underline">Terms of Service</a> and <a href="/privacy" target="_blank" className="text-primary font-bold hover:underline">Privacy Policy</a>.
+                </label>
+              </div>
+            )}
+
             <button 
               type="submit"
               className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-lg hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 active:scale-[0.98]"
@@ -149,7 +174,7 @@ const Login = () => {
                 onClick={() => setIsRegister(!isRegister)}
                 className="ml-2 text-primary font-bold hover:underline"
               >
-                {isRegister ? 'Sign in instead' : 'Join the waitlist'}
+                {isRegister ? 'Sign in instead' : 'Create an account'}
               </button>
             </p>
           </div>
