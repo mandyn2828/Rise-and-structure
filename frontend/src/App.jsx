@@ -47,14 +47,14 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<Dashboard />} />
-            <Route path="progress" element={<Progress />} />
-            <Route path="plan" element={<Plan />} />
-            <Route path="wellness" element={<Wellness />} />
-            <Route path="finance" element={<Finance />} />
-            <Route path="mindset" element={<Mindset />} />
-            <Route path="community" element={<Community />} />
-            <Route path="map" element={<ConnectionMap />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="/dashboard/progress" element={<Progress />} />
+            <Route path="/dashboard/plan" element={<Plan />} />
+            <Route path="/dashboard/wellness" element={<Wellness />} />
+            <Route path="/dashboard/finance" element={<Finance />} />
+            <Route path="/dashboard/mindset" element={<Mindset />} />
+            <Route path="/dashboard/community" element={<Community />} />
+            <Route path="/dashboard/map" element={<ConnectionMap />} />
+            <Route path="/dashboard/settings" element={<Settings />} />
           </Route>
 
           {/* Redirects */}
